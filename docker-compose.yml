@@ -27,3 +27,12 @@ services:
       - elasticsearch
     environment:
       ELASTICSEARCH_URL: http://elasticsearch:9200
+
+  app:
+    image: app
+    build: ./nodejs
+    tty: true
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./nodejs/app:/app
