@@ -1,10 +1,13 @@
 {
   "name": "yumemi-slack",
   "version": "1.0.0",
-  "description": "",
+  "description": "yumemi-slack node",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:yumemi-nkomiya/elastic_slack.git"
+  },
   "main": "index.js",
   "scripts": {
-    "dev": "node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "n_komiya@yumemi.co.jp",
