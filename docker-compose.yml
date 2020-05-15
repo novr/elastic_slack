@@ -35,4 +35,6 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./nodejs/app:/app
+      - ./nodejs:/app
+    environment:
+      NODE_ENV: development
