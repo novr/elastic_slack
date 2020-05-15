@@ -36,5 +36,6 @@ services:
       - "3000:3000"
     volumes:
       - ./nodejs:/app
+      - ./tmp:/tmp
     environment:
       NODE_ENV: development
