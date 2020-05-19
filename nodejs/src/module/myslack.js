@@ -15,13 +15,13 @@ module.exports.getChannels = async () => {
         res.channels.forEach(c => channels.push(c));
         if (res.response_metadata && res.response_metadata.next_cursor && res.response_metadata.next_cursor !== '') {
             param.cursor = res.response_metadata.next_cursor;
-            console.log(`getChannels.next:${JSON.stringify(param)}`);
+            // console.log(`getChannels.next:${JSON.stringify(param)}`);
             return web.conversations.list(param).then(pageLoaded);
         }
-        console.log(`getChannels.end:${channels.length}`);
+        // console.log(`getChannels.end:${channels.length}`);
         return channels;
     }
-    console.log(`getChannels.start:${JSON.stringify(param)}`);
+    // console.log(`getChannels.start:${JSON.stringify(param)}`);
     const res = await web.conversations.list(param).then(pageLoaded);
     return res
 }
@@ -29,8 +29,8 @@ module.exports.getChannels = async () => {
 module.exports.getHistory = async (channel, oldest, latest) => {
     const param = {
         channel: channel,
-        oldest: oldest,
-        latest: latest,
+        oldest: oldest.getTime() / 1000,
+        latest: latest.getTime() / 1000,
         limit: 1000
     };
     let historys = [];
@@ -38,13 +38,13 @@ module.exports.getHistory = async (channel, oldest, latest) => {
         res.messages.forEach(m => historys.push(m));
         if (res.response_metadata && res.response_metadata.next_cursor && res.response_metadata.next_cursor !== '') {
             param.cursor = res.response_metadata.next_cursor;
-            console.log(`getHistory.next:${JSON.stringify(param)}`);
+            // console.log(`getHistory.next:${JSON.stringify(param)}`);
             return web.conversations.history(param).then(pageLoaded);
         }
-        console.log(`getHistory.end:${historys.length}`);
+        // console.log(`getHistory.end:${historys.length}`);
         return historys;
     }
-    console.log(`getHistory.start:${JSON.stringify(param)}`);
+    // console.log(`getHistory.start:${JSON.stringify(param)}`);
     const res = await web.conversations.history(param).then(pageLoaded);
     return res
 }
@@ -58,13 +58,13 @@ module.exports.getUsers = async () => {
         res.members.forEach(c => members.push(c));
         if (res.response_metadata && res.response_metadata.next_cursor && res.response_metadata.next_cursor !== '') {
             param.cursor = res.response_metadata.next_cursor;
-            console.log(`getUsers.next:${JSON.stringify(param)}`);
+            // console.log(`getUsers.next:${JSON.stringify(param)}`);
             return web.users.list(param).then(pageLoaded);
         }
-        console.log(`getUsers.end:${members.length}`);
+        // console.log(`getUsers.end:${members.length}`);
         return members;
     }
-    console.log(`getUsers.start:${JSON.stringify(param)}`);
+    // console.log(`getUsers.start:${JSON.stringify(param)}`);
     const res = await web.users.list(param).then(pageLoaded);
     return res
 }
