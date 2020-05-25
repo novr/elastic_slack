@@ -33,7 +33,7 @@ const exportHistory = async (channel, oldest, latest, appned = false) => {
     const historyJson = `${historyPath}/${oldest.toFormat("YYYY")}.json`
     let history;
     if (appned && fs.existsSync(historyJson)) {
-        history = require(historyJson).concat(res);
+        history = res.concat(require(historyJson));
     } else {
         history = res;
     }
