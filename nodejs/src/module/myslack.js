@@ -51,7 +51,7 @@ module.exports.getHistory = async (channel, oldest, latest) => {
 
 module.exports.getUsers = async () => {
     const param = {
-        limit: 200
+        limit: 100
     };
     let members = [];
     function pageLoaded(res) {
