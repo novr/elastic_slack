@@ -10,18 +10,37 @@ const paramPath = `${dist}/param.json`;
 const exportChannels = async (param, latest) => {
     const channelsJson = `${dist}/channels.json`;
     let channels;
-    if (fs.existsSync(channelsJson) && latest == param.channels) {
+    if (fs.existsSync(channelsJson) && latest.getTime() == param.channels) {
         channels = require(channelsJson);
         console.log("exportChannels:skip");
     } else {
         console.time("exportChannels");
         channels = await slack.getChannels();
         fs.writeFileSync(channelsJson, JSON.stringify(channels, null, 4));
-        param.channels = latest;
+        param.channels = latest.getTime();
+        param.channelsDate = latest;
         saveParam(param);
         console.timeEnd("exportChannels");
     }
     return channels;
+}
+
+const exportUsers = async (param, latest) => {
+    const usersJson = `${dist}/users.json`;
+    let users;
+    if (fs.existsSync(users) && latest.getTime() == param.users) {
+        users = require(usersJson);
+        console.log("exportUsers:skip");
+    } else {
+        console.time("exportUsers");
+        users = await slack.getUsers();
+        fs.writeFileSync(usersJson, JSON.stringify(users, null, 4));
+        param.users = latest.getTime();
+        param.usersDate = latest;
+        saveParam(param);
+        console.timeEnd("exportUsers");
+    }
+    return users;
 }
 
 const exportHistory = async (channel, oldest, latest, appned = false) => {
@@ -73,7 +92,9 @@ const exportHistorys = async (channels, param, latest) => {
             param.lastYear = year + 1;
             saveParam(param);
         }
-        param.historys = new Date(nowYear, 0, 1).getTime();
+        const historysDate = new Date(nowYear, 0, 1);
+        param.historys = historysDate.getTime();
+        param.historysDate = historysDate;
         saveParam(param);
     } else {
         console.log("exportPastHistorys:skip");
@@ -82,6 +103,7 @@ const exportHistorys = async (channels, param, latest) => {
     if (oldest.getTime() != latest.getTime()) {
         await exportDiffHistorys(channels, oldest, latest, param);
         param.historys = latest.getTime();
+        param.historysDate = latest;
         saveParam(param);
     } else {
         console.log("exportDiffHistorys:skip");
@@ -104,9 +126,12 @@ const main = async () => {
     var param = loadParam();
 
     var latest = Date.yesterday();
-    var latestTime = latest.getTime();
 
-    let channels = await exportChannels(param, latestTime);
+    let channels = await exportChannels(param, latest);
+    console.log("channels: " + channels.length);
+
+    let users = await exportUsers(param, latest);
+    console.log("users: " + users.length);
 
     await exportHistorys(channels, param, latest);
 
