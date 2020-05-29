@@ -18,31 +18,46 @@ const userid2name = (id) => {
     return user ? user.name : "";
 }
 
-const ship = async () => {
-    await createIndices();
-    for (const channel of nqdm(slack.channels)) {
-        await shipChannel(channel);
+const ship = async (options) => {
+    console.time("ship");
+    console.log(options);
+    if (options["i"]) {
+       await createIndices();
     }
+    let channels = slack.channels;
+    if (options["c"]) {
+        channels = channels.filter(c => c.id == options["c"]);
+    }
+    console.log(`channel:${channels.map(c => c.name)}`);
+    for (const channel of nqdm(channels)) {
+        await shipChannel(channel, options);
+    }
+    console.timeEnd("ship");
 }
 
 const createIndices = async () => {
+    console.time("createIndices");
     const indices = require('./template/slack.json');
     await elastic.client.indices.create({
         index: 'tweets',
         body: indices
-    }, { ignore: [400] })
+    }, { ignore: [400] });
+    console.timeEnd("createIndices");
 }
 
-const shipChannel = async (channel) => {
-    const history = await loadChannel(channel.id);
+const shipChannel = async (channel, options) => {
+    const history = await loadChannel(channel.id, options["y"]);
     const docs = aggregate(history, channel.name);
     await bulkIndex(docs);
 }
 
-const loadChannel = async (id) => {
+const loadChannel = async (id, target = null) => {
     const files = listFiles(`${dist}/history/${id}`);
     let history = [];
     for (const file of files) {
+        if (target && !file.includes(target)) {
+            continue;
+        }
         const json = require(file);
         json.forEach(c => history.push(c));
     }
@@ -91,7 +106,8 @@ const bulkIndex = async (docs) => {
 }
 
 const main = () => {
-    ship();
+    const argv = require("minimist")(process.argv.slice(2));
+    ship(argv);
 }
 
 main();
