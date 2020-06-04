@@ -49,17 +49,29 @@ const exportHistory = async (channel, oldest, latest, appned = false) => {
         fs.mkdirSync(historyPath, { recursive: true });
     }
     const res = await slack.getHistory(channel.id, oldest, latest);
-    const historyJson = `${historyPath}/${oldest.toFormat("YYYY")}.json`
-    let history;
-    if (appned && fs.existsSync(historyJson)) {
-        history = res.concat(require(historyJson));
-    } else {
-        history = res;
+    if (res.length == 0) {
+        return [];
     }
-    if (history.length > 0) {
-        fs.writeFileSync(historyJson, JSON.stringify(history, null, 4));
+    let jsons = {};
+    res.forEach(value => {
+        const key = new Date(value.ts * 1000).toFormat("YYYY-MM-DD");
+        if (jsons.hasOwnProperty(key)) {
+            jsons[key].push(value);
+        } else {
+            jsons[key] = [value];
+        }
+    });
+    for (const key in jsons) {
+        if (!jsons.hasOwnProperty(key)) {
+            continue;
+        }
+        const historyJson = `${historyPath}/${key}.json`
+        let history = jsons[key];
+        if (history.length > 0) {
+            fs.writeFileSync(historyJson, JSON.stringify(history, null, 4));
+        }
     }
-    return history;
+    return res;
 }
 
 const exportPastHistorys = async (channels, year) => {
