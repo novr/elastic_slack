@@ -68,3 +68,13 @@ module.exports.getUsers = async () => {
     const res = await web.users.list(param).then(pageLoaded);
     return res
 }
+
+module.exports.getEmojis = async () => {
+    let emojis = [];
+    function pageLoaded(res) {
+        Object.entries(res.emoji).forEach(([key, value]) => emojis.push({ "id": key, "emoji": value}))
+        return emojis;
+    }
+    const res = await web.emoji.list().then(pageLoaded);
+    return res
+}

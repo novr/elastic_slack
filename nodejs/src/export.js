@@ -28,7 +28,7 @@ const exportChannels = async (param, latest) => {
 const exportUsers = async (param, latest) => {
     const usersJson = `${dist}/users.json`;
     let users;
-    if (fs.existsSync(users) && latest.getTime() == param.users) {
+    if (fs.existsSync(usersJson) && latest.getTime() == param.users) {
         users = require(usersJson);
         console.log("exportUsers:skip");
     } else {
@@ -41,6 +41,24 @@ const exportUsers = async (param, latest) => {
         console.timeEnd("exportUsers");
     }
     return users;
+}
+
+const exportEmojis = async (param, latest) => {
+    const emojisJson = `${dist}/emojis.json`;
+    let emojis;
+    if (fs.existsSync(emojisJson) && latest.getTime() == param.emojis) {
+        emojis = require(emojisJson);
+        console.log("exportEmojis:skip");
+    } else {
+        console.time("exportEmojis");
+        emojis = await slack.getEmojis();
+        fs.writeFileSync(emojisJson, JSON.stringify(emojis, null, 4));
+        param.emojis = latest.getTime();
+        param.emojisDate = latest;
+        saveParam(param);
+        console.timeEnd("exportEmojis");
+    }
+    return emojis;
 }
 
 const exportHistory = async (channel, oldest, latest, appned = false) => {
@@ -144,6 +162,9 @@ const main = async () => {
 
     let users = await exportUsers(param, latest);
     console.log("users: " + users.length);
+
+    let emojis = await exportEmojis(param, latest);
+    console.log("emojis: " + emojis.length);
 
     await exportHistorys(channels, param, latest);
 
