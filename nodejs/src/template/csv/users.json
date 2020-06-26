@@ -1,0 +1,10 @@
+[
+    "id",
+    "team_id",
+    "name",
+    "real_name",
+    "is_bot",
+    "profile.email",
+    "profile.image_original",
+    "deleted"
+]
