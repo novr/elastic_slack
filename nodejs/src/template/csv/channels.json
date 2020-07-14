@@ -1,7 +1,15 @@
-[
-    "id",
-    "name",
-    "topic.value",
-    "purpose.value",
-    "num_members"
-]
+{
+    "fields": [
+        "id",
+        "name",
+        {
+            "label": "topic",
+            "value": "topic.value"
+        },
+        {
+            "label": "purpose",
+            "value": "purpose.value"
+        },
+        "num_members"
+    ]
+}

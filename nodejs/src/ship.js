@@ -38,7 +38,7 @@ const ship = async (options) => {
 
 const createIndices = async () => {
     console.time("createIndices");
-    const indices = require('./template/slack.json');
+    const indices = require('./template/elastic/slack.json');
     await elastic.client.indices.create({
         index: 'tweets',
         body: indices
