@@ -1,8 +1,12 @@
 {
     "fields": [
+        "channel_id",
         "ts",
+        "type",
         "user",
         "text",
-        "thread_ts"
+        "thread_ts",
+        "reply_count",
+        "reply_users_count"
     ]
 }

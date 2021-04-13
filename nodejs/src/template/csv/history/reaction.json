@@ -1,4 +1,21 @@
 {
     "fields": [
-    ]
+        "channel_id",
+        "ts",
+        {
+            "label": "to_user",
+            "value": "user"
+        },
+        {
+            "label": "from_user",
+            "value": "reactions.users"
+        },
+        {
+            "label": "emoji",
+            "value": "name"
+        }
+    ],
+    "unwind": {
+        "paths": ["reactions", "reactions.users"]
+    }
 }
